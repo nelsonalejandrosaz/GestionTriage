@@ -1,0 +1,82 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model GestionTriage.ViewModels.ListaPacientesViewModel
+
+<div class="container">
+    <h2>Gestión de Pacientes</h2>
+
+    <div class="row mb-3">
+        <div class="col">
+            <form asp-action="Index" method="get" class="form-inline">
+                <div class="input-group">
+                    <input type="text" name="busqueda" class="form-control"
+                           placeholder="Buscar por nombre o DUI..."
+                           value="@Model.TerminoBusqueda">
+                    <div class="input-group-append">
+                        <button class="btn btn-primary" type="submit">Buscar</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col text-right">
+            <a asp-action="Crear" class="btn btn-success">Nuevo Paciente</a>
+        </div>
+    </div>
+
+    <div class="table-responsive">
+        <table class="table table-striped">
+            <thead>
+            <tr>
+                <th>DUI</th>
+                <th>Nombres</th>
+                <th>Apellidos</th>
+                <th>Edad</th>
+                <th>Género</th>
+                <th>Teléfono</th>
+                <th>Acciones</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var paciente in Model.Pacientes)
+            {
+                <tr>
+                    <td>@paciente.DUI</td>
+                    <td>@paciente.Nombres</td>
+                    <td>@paciente.Apellidos</td>
+                    <td>@paciente.Edad años</td>
+                    <td>@paciente.Genero</td>
+                    <td>@paciente.Telefono</td>
+                    <td>
+                        <a asp-action="Editar" asp-route-id="@paciente.Id"
+                           class="btn btn-sm btn-primary">Editar</a>
+                        <button type="button" class="btn btn-sm btn-danger"
+                                onclick="confirmarEliminacion(@paciente.Id)">
+                            Eliminar
+                        </button>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function confirmarEliminacion(id) {
+            if (confirm('¿Está seguro que desea eliminar este paciente?')) {
+                var form = document.createElement('form');
+                form.method = 'post';
+                form.action = '@Url.Action("Eliminar")/' + id;
+
+                var antiForgeryToken = document.createElement('input');
+                antiForgeryToken.type = 'hidden';
+                antiForgeryToken.name = '__RequestVerificationToken';
+                antiForgeryToken.value = document.querySelector('input[name="__RequestVerificationToken"]').value;
+
+                form.appendChild(antiForgeryToken);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
+}
