@@ -1,0 +1,101 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model GestionTriage.ViewModels.ListaNivelesTriageViewModel
+@{
+    ViewData["Title"] = "Niveles de Triage";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Niveles de Triage</h2>
+        <a asp-action="Crear" class="btn btn-success">
+            <i class="bi bi-plus-circle"></i> Nuevo Nivel
+        </a>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Color</th>
+                            <th>Descripción</th>
+                            <th>Tiempo Máximo</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var nivel in Model.Niveles)
+                        {
+                            <tr>
+                                <td>@nivel.Nombre</td>
+                                <td>
+                                    <div class="d-flex align-items-center">
+                                        <span class="color-preview me-2" style="background-color: @nivel.Color"></span>
+                                        <span>@nivel.Color</span>
+                                    </div>
+                                </td>
+                                <td>@nivel.Descripcion</td>
+                                <td>@nivel.TiempoMaximoAtencion minutos</td>
+                                <td>
+                                    <span class="badge bg-@(nivel.Activo ? "success" : "danger")">
+                                        @(nivel.Activo ? "Activo" : "Inactivo")
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a asp-action="Editar" asp-route-id="@nivel.Id" 
+                                           class="btn btn-sm btn-primary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-sm btn-danger"
+                                                onclick="confirmarEliminacion(@nivel.Id, '@nivel.Nombre')"
+                                                @(nivel.CantidadReglas > 0 ? "disabled" : "")>
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form id="deleteForm" asp-action="Eliminar" method="post">
+    <input type="hidden" name="id" id="deleteId" />
+</form>
+
+@section Styles {
+    <style>
+        .color-preview {
+            width: 25px;
+            height: 25px;
+            border-radius: 4px;
+            border: 1px solid #dee2e6;
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        function confirmarEliminacion(id, nombre) {
+            if (confirm(`¿Está seguro que desea eliminar el nivel "${nombre}"?`)) {
+                document.getElementById('deleteId').value = id;
+                document.getElementById('deleteForm').submit();
+            }
+        }
+    </script>
+}

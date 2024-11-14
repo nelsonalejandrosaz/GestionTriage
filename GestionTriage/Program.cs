@@ -14,6 +14,8 @@ builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<ITriageService, TriageService>();
 builder.Services.AddScoped<IPacienteService, PacienteService>();
+builder.Services.AddScoped<IReglaAsignacionService, ReglaAsignacionService>();
+builder.Services.AddScoped<INivelTriageService, NivelTriageService>();
 
 var app = builder.Build();
 

@@ -1,0 +1,108 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model GestionTriage.ViewModels.NivelTriageViewModel
+@{
+    ViewData["Title"] = "Crear Nivel de Triage";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Crear Nivel de Triage</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Crear" method="post" id="nivelForm">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Nombre" class="form-label">Nombre</label>
+                            <input asp-for="Nombre" class="form-control" />
+                            <span asp-validation-for="Nombre" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Color" class="form-label">Color</label>
+                            <div class="input-group">
+                                <input asp-for="Color" class="form-control" type="text" />
+                                <input type="color" id="colorPicker" class="form-control form-control-color" 
+                                       title="Elegir color" />
+                            </div>
+                            <span asp-validation-for="Color" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Descripcion" class="form-label">Descripción</label>
+                            <textarea asp-for="Descripcion" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Descripcion" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="TiempoMaximoAtencion" class="form-label">
+                                Tiempo Máximo de Atención (minutos)
+                            </label>
+                            <input asp-for="TiempoMaximoAtencion" class="form-control" type="number" min="1" max="1440" />
+                            <span asp-validation-for="TiempoMaximoAtencion" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input asp-for="Activo" class="form-check-input" />
+                                <label asp-for="Activo" class="form-check-label">Activo</label>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="Index" class="btn btn-secondary">Volver</a>
+                            <button type="submit" class="btn btn-primary">Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            // Inicializar el color picker
+            const colorInput = $('#Color');
+            const colorPicker = $('#colorPicker');
+
+            // Sincronizar color picker con input
+            colorInput.on('input', function() {
+                colorPicker.val($(this).val());
+            });
+
+            colorPicker.on('input', function() {
+                colorInput.val($(this).val());
+            });
+
+            // Validación del formato de color
+            $.validator.addMethod('validHexColor', function(value, element) {
+                return this.optional(element) || /^#([A-Fa-f0-9]{6})$/.test(value);
+            }, 'Por favor, ingrese un color válido en formato hexadecimal (ej: #FF0000)');
+
+            // Agregar regla de validación personalizada
+            $('#nivelForm').validate({
+                rules: {
+                    Color: {
+                        required: true,
+                        validHexColor: true
+                    }
+                }
+            });
+
+            // Formatear el input de color al perder el foco
+            colorInput.on('blur', function() {
+                let valor = $(this).val().trim();
+                if (valor && !valor.startsWith('#')) {
+                    valor = '#' + valor;
+                    $(this).val(valor);
+                }
+            });
+        });
+    </script>
+}
