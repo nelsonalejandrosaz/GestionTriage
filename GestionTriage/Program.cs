@@ -1,7 +1,19 @@
+using GestionTriage.Data;
+using GestionTriage.Services;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
+
+// Add DbContext to the container.
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection")));
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddScoped<ITriageService, TriageService>();
+builder.Services.AddScoped<IPacienteService, PacienteService>();
 
 var app = builder.Build();
 

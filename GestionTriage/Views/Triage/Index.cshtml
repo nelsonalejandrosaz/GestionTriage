@@ -1,18 +1,42 @@
-﻿@model TModel
+﻿<!-- Views/Triage/Index.cshtml -->
+@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model IEnumerable<GestionTriage.ViewModels.TriageViewModel>
 
-@{
-    Layout = null;
-}
-
-<!DOCTYPE html>
-
-<html>
-<head>
-    <title>title</title>
-</head>
-<body>
-<div>
-      
+<div class="container">
+    <h2>Panel de Triage</h2>
+    <a asp-action="NuevoIngreso" class="btn btn-primary mb-3">Nuevo Ingreso</a>
+    
+    <div class="row">
+        <div class="col">
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Paciente</th>
+                    <th>Nivel</th>
+                    <th>Tiempo Espera</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.CodigoAtencion</td>
+                        <td>@item.NombreCompleto</td>
+                        <td>
+                            <span class="badge" style="background-color: @item.ColorTriage">
+                                @item.NivelTriage
+                            </span>
+                        </td>
+                        <td>@item.TiempoEspera.ToString(@"hh\:mm")</td>
+                        <td>
+                            <button class="btn btn-success btn-sm">Atender</button>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
-</body>
-</html>

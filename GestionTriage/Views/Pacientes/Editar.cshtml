@@ -1,8 +1,145 @@
-﻿@model GestionTriage.ViewModels.PacienteViewModel
-
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model GestionTriage.ViewModels.PacienteViewModel
 @{
-    ViewBag.Title = "title";
-    Layout = "_Layout";
+    ViewData["Title"] = "Editar Paciente";
 }
 
-<h2>title</h2>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Editar Paciente</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Editar" method="post">
+                        <input type="hidden" asp-for="Id" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Nombres" class="form-label">Nombres</label>
+                                <input asp-for="Nombres" class="form-control" />
+                                <span asp-validation-for="Nombres" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Apellidos" class="form-label">Apellidos</label>
+                                <input asp-for="Apellidos" class="form-control" />
+                                <span asp-validation-for="Apellidos" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="DUI" class="form-label">DUI</label>
+                                <input asp-for="DUI" class="form-control" placeholder="00000000-0" readonly />
+                                <small class="text-muted">El DUI no puede ser modificado</small>
+                                <span asp-validation-for="DUI" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="FechaNacimiento" class="form-label">Fecha de Nacimiento</label>
+                                <input asp-for="FechaNacimiento" class="form-control" type="date" />
+                                <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Genero" class="form-label">Género</label>
+                                <select asp-for="Genero" class="form-select">
+                                    <option value="">Seleccione un género</option>
+                                    <option value="M">Masculino</option>
+                                    <option value="F">Femenino</option>
+                                </select>
+                                <span asp-validation-for="Genero" class="text-danger"></span>
+                            </div>
+
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="Telefono" class="form-label">Teléfono</label>
+                                <input asp-for="Telefono" class="form-control" placeholder="0000-0000" />
+                                <span asp-validation-for="Telefono" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Direccion" class="form-label">Dirección</label>
+                            <textarea asp-for="Direccion" class="form-control" rows="3"></textarea>
+                            <span asp-validation-for="Direccion" class="text-danger"></span>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col">
+                                <a asp-action="Index" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left"></i> Volver a la lista
+                                </a>
+                            </div>
+                            <div class="col text-end">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-save"></i> Guardar Cambios
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            @if (Model.Id > 0)
+            {
+                <div class="card mt-4">
+                    <div class="card-header">
+                        <h4 class="card-title">Historial de Triage</h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Aquí podríamos agregar una tabla o lista con el historial de triage del paciente -->
+                        <div class="alert alert-info">
+                            Esta sección mostrará el historial de triage del paciente cuando esté implementada.
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        $(document).ready(function () {
+            // Máscara para el teléfono
+            $('#Telefono').on('input', function () {
+                var telefono = $(this).val().replace(/\D/g, '');
+                if (telefono.length > 4) {
+                    telefono = telefono.substr(0, 4) + '-' + telefono.substr(4, 4);
+                }
+                $(this).val(telefono);
+            });
+
+            // Validación de fecha de nacimiento
+            $('#FechaNacimiento').on('change', function () {
+                var fechaSeleccionada = new Date($(this).val());
+                var hoy = new Date();
+                
+                if (fechaSeleccionada > hoy) {
+                    alert('La fecha de nacimiento no puede ser mayor a la fecha actual');
+                    $(this).val('');
+                }
+            });
+
+            // Confirmar antes de salir si hay cambios
+            var formInicial = $('form').serialize();
+            
+            $('form').on('submit', function() {
+                window.onbeforeunload = null;
+            });
+
+            window.onbeforeunload = function() {
+                if ($('form').serialize() !== formInicial) {
+                    return "Tiene cambios sin guardar. ¿Está seguro que desea salir?";
+                }
+            };
+        });
+    </script>
+}
