@@ -1,0 +1,220 @@
+﻿@model GestionTriage.Services.ListaRegistrosTriageViewModel
+@{
+    ViewData["Title"] = "Registros de Triage";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2>Registros de Triage</h2>
+        <a asp-action="Crear" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> Nuevo Registro
+        </a>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <label class="form-label">Filtrar por Hospital</label>
+                    <select id="filtroHospital" class="form-select" 
+                            asp-items="@Model.Hospitales">
+                        <option value="">Todos los hospitales</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Estado de Atención</label>
+                    <select id="filtroEstado" class="form-select">
+                        <option value="">Todos los estados</option>
+                        @* <option value="false" @(Model.FiltroEstadoAtendido == false ? "selected" : "")>En espera</option> *@
+                        @* <option value="true" @(Model.FiltroEstadoAtendido == true ? "selected" : "")>Atendidos</option> *@
+                        <option value="false">En espera</option>
+                        <option value="true">Atendidos</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Código</th>
+                            <th>Paciente</th>
+                            <th>Nivel Triage</th>
+                            <th>Hospital</th>
+                            <th>Ingreso</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var registro in Model.Registros)
+                        {
+                            <tr>
+                                <td>@registro.CodigoAtencion</td>
+                                <td>@registro.NombrePaciente</td>
+                                <td>
+                                    <span class="badge" style="background-color: @registro.ColorNivelTriage">
+                                        @registro.NivelTriageNombre
+                                    </span>
+                                </td>
+                                <td>@registro.NombreHospital</td>
+                                <td>@registro.FechaHoraIngreso.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    @if (registro.EstadoAtendido)
+                                    {
+                                        <span class="badge bg-success">Atendido</span>
+                                    }
+                                    else if (registro.FechaHoraAtencion.HasValue)
+                                    {
+                                        <span class="badge bg-warning">En Atención</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">En Espera</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a asp-action="Detalles" asp-route-id="@registro.Id" 
+                                           class="btn btn-sm btn-info">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
+                                        @if (!registro.EstadoAtendido)
+                                        {
+                                            if (!registro.FechaHoraAtencion.HasValue)
+                                            {
+                                                <button type="button" class="btn btn-sm btn-success"
+                                                        onclick="iniciarAtencion(@registro.Id)">
+                                                    <i class="bi bi-play-fill"></i>
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button type="button" class="btn btn-sm btn-warning"
+                                                        onclick="finalizarAtencion(@registro.Id)">
+                                                    <i class="bi bi-check-lg"></i>
+                                                </button>
+                                            }
+                                        }
+                                        <button type="button" class="btn btn-sm btn-danger" 
+                                                onclick="confirmarEliminacion(@registro.Id)">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal para Finalizar Atención -->
+<div class="modal fade" id="finalizarAtencionModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Finalizar Atención</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form id="finalizarAtencionForm" method="post">
+                <div class="modal-body">
+                    <input type="hidden" id="registroId" name="id" />
+                    <div class="mb-3">
+                        <label for="observaciones" class="form-label">Observaciones de Atención</label>
+                        <textarea class="form-control" id="observaciones" name="observaciones" 
+                                required rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="submit" class="btn btn-primary">Finalizar Atención</button>
+                </div>
+                @Html.AntiForgeryToken()
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            $('#filtroHospital, #filtroEstado').change(function() {
+                var hospitalId = $('#filtroHospital').val();
+                var estado = $('#filtroEstado').val();
+                var url = '@Url.Action("Index")';
+                var params = [];
+                
+                if (hospitalId) {
+                    params.push('filtroHospitalId=' + hospitalId);
+                }
+                if (estado !== '') {
+                    params.push('filtroEstadoAtendido=' + estado);
+                }
+                
+                if (params.length > 0) {
+                    url += '?' + params.join('&');
+                }
+                
+                window.location.href = url;
+            });
+        });
+
+        function iniciarAtencion(id) {
+            if (confirm('¿Desea iniciar la atención de este paciente?')) {
+                var form = document.createElement('form');
+                form.method = 'post';
+                form.action = '@Url.Action("IniciarAtencion")/' + id;
+                
+                var token = document.createElement('input');
+                token.type = 'hidden';
+                token.name = '__RequestVerificationToken';
+                token.value = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                
+                form.appendChild(token);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        function finalizarAtencion(id) {
+            $('#registroId').val(id);
+            $('#finalizarAtencionModal').modal('show');
+        }
+
+        function confirmarEliminacion(id) {
+            if (confirm('¿Está seguro que desea eliminar este registro de triage?')) {
+                var form = document.createElement('form');
+                form.method = 'post';
+                form.action = '@Url.Action("Eliminar")/' + id;
+                
+                var token = document.createElement('input');
+                token.type = 'hidden';
+                token.name = '__RequestVerificationToken';
+                token.value = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                
+                form.appendChild(token);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+
+        $('#finalizarAtencionForm').on('submit', function(e) {
+            e.preventDefault();
+            var form = $(this);
+            $.ajax({
+                url: '@Url.Action("FinalizarAtencion")/' + $('#registroId').val(),
+                method: 'POST',
+                data: form.serialize(),
+                success: function() {
+                    window.location.reload();
+                },
+                error: function() {
+                    alert('Ocurrió un error al finalizar la atención');
+                }
+            });
+        });
+    </script>
+}

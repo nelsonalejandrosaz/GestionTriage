@@ -1,0 +1,81 @@
+﻿@model GestionTriage.Services.CrearRegistroTriageViewModel
+@{
+    ViewData["Title"] = "Nuevo Registro de Triage";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Nuevo Registro de Triage</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Crear" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="PacienteId" class="form-label">Paciente</label>
+                            <select asp-for="PacienteId" class="form-select" 
+                                    asp-items="@Model.Pacientes">
+                                <option value="">Seleccione un paciente...</option>
+                            </select>
+                            <span asp-validation-for="PacienteId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="NivelTriageId" class="form-label">Nivel de Triage</label>
+                            <select asp-for="NivelTriageId" class="form-select" 
+                                    asp-items="@Model.NivelesTriage">
+                                <option value="">Seleccione un nivel...</option>
+                            </select>
+                            <span asp-validation-for="NivelTriageId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="HospitalId" class="form-label">Hospital</label>
+                            <select asp-for="HospitalId" class="form-select" 
+                                    asp-items="@Model.Hospitales">
+                                <option value="">Seleccione un hospital...</option>
+                            </select>
+                            <span asp-validation-for="HospitalId" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="ObservacionesIngreso" class="form-label">Observaciones de Ingreso</label>
+                            <textarea asp-for="ObservacionesIngreso" class="form-control" rows="3" 
+                                    placeholder="Ingrese las observaciones iniciales del paciente"></textarea>
+                            <span asp-validation-for="ObservacionesIngreso" class="text-danger"></span>
+                        </div>
+
+                        <div class="row mt-4">
+                            <div class="col">
+                                <a asp-action="Index" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left"></i> Volver
+                                </a>
+                            </div>
+                            <div class="col text-end">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-save"></i> Registrar Paciente
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            // Aplicar Select2 a los dropdowns para mejor experiencia de usuario
+            $('.form-select').select2({
+                theme: 'bootstrap-5',
+                width: '100%'
+            });
+        });
+    </script>
+}

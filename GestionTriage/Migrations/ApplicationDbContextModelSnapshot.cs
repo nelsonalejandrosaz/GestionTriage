@@ -155,7 +155,6 @@ namespace GestionTriage.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ObservacionesAtencion")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ObservacionesIngreso")

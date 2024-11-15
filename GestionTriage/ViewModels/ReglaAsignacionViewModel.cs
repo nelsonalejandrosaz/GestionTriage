@@ -24,6 +24,6 @@ public class ReglaAsignacionViewModel
 
     public bool Activo { get; set; }
 
-    public string NombreNivelTriage { get; set; }
-    public string ColorNivelTriage { get; set; }
+    public string? NombreNivelTriage { get; set; }
+    public string? ColorNivelTriage { get; set; }
 }

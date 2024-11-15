@@ -1,8 +1,152 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+﻿@model GestionTriage.ViewModels.ResumenTriageViewModel
+@{
+    ViewData["Title"] = "Inicio";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <h2>Panel de Control - Triage</h2>
+        </div>
+    </div>
+
+    <!-- Tarjetas de Resumen -->
+    <div class="row mb-4">
+        <div class="col-md-3">
+            <div class="card bg-primary text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Total Registros</h5>
+                    <h2 class="mb-0">@Model.TotalRegistros</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-warning text-dark">
+                <div class="card-body">
+                    <h5 class="card-title">En Espera</h5>
+                    <h2 class="mb-0">@Model.RegistrosEnEspera</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-info text-white">
+                <div class="card-body">
+                    <h5 class="card-title">En Atención</h5>
+                    <h2 class="mb-0">@Model.RegistrosEnAtencion</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card bg-success text-white">
+                <div class="card-body">
+                    <h5 class="card-title">Atendidos</h5>
+                    <h2 class="mb-0">@Model.RegistrosAtendidos</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Distribución por Nivel de Triage -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Registros por Nivel de Triage</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Nivel</th>
+                                    <th>En Espera</th>
+                                    <th>En Atención</th>
+                                    <th>Atendidos</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var nivel in Model.RegistrosPorNivel)
+                                {
+                                    <tr>
+                                        <td>
+                                            <span class="badge" style="background-color: @nivel.Color">
+                                                @nivel.Nombre
+                                            </span>
+                                        </td>
+                                        <td>@nivel.EnEspera</td>
+                                        <td>@nivel.EnAtencion</td>
+                                        <td>@nivel.Atendidos</td>
+                                        <td>@nivel.Total</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="card-title mb-0">Últimos Registros</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Código</th>
+                                    <th>Nivel</th>
+                                    <th>Ingreso</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var registro in Model.UltimosRegistros)
+                                {
+                                    <tr>
+                                        <td>
+                                            <a asp-controller="RegistroTriage" 
+                                               asp-action="Detalles" 
+                                               asp-route-id="@registro.Id">
+                                                @registro.CodigoAtencion
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <span class="badge" style="background-color: @registro.ColorNivelTriage">
+                                                @registro.NivelTriageNombre
+                                            </span>
+                                        </td>
+                                        <td>@registro.FechaHoraIngreso.ToString("dd/MM HH:mm")</td>
+                                        <td>
+                                            @if (registro.EstadoAtendido)
+                                            {
+                                                <span class="badge bg-success">Atendido</span>
+                                            }
+                                            else if (registro.FechaHoraAtencion.HasValue)
+                                            {
+                                                <span class="badge bg-warning">En Atención</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-danger">En Espera</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-end mt-3">
+                        <a asp-controller="RegistroTriage" 
+                           asp-action="Index" 
+                           class="btn btn-primary">
+                            Ver todos los registros
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

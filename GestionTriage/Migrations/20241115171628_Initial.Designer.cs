@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace GestionTriage.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241114212417_MigracionInicial")]
-    partial class MigracionInicial
+    [Migration("20241115171628_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -158,7 +158,6 @@ namespace GestionTriage.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("ObservacionesAtencion")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("ObservacionesIngreso")

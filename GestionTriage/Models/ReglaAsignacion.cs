@@ -10,5 +10,5 @@ public class ReglaAsignacion
     public bool Activo { get; set; }
 
     // Relaciones
-    public NivelTriage NivelTriage { get; set; }
+    public NivelTriage? NivelTriage { get; set; }
 }

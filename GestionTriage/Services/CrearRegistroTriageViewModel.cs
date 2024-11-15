@@ -18,7 +18,7 @@ public class CrearRegistroTriageViewModel
     [StringLength(500)]
     public string ObservacionesIngreso { get; set; }
     
-    public SelectList Pacientes { get; set; }
-    public SelectList NivelesTriage { get; set; }
-    public SelectList Hospitales { get; set; }
+    public SelectList? Pacientes { get; set; }
+    public SelectList? NivelesTriage { get; set; }
+    public SelectList? Hospitales { get; set; }
 }

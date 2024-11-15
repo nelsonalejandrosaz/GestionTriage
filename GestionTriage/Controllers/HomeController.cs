@@ -7,15 +7,16 @@ namespace GestionTriage.Controllers;
 
 public class HomeController : Controller
 {
-    private readonly ITriageService _triageService;
+    private readonly IRegistroTriageService _registroTriageService;
 
-    public HomeController(ITriageService triageService)
+    public HomeController(IRegistroTriageService registroTriageService)
     {
-        _triageService = triageService;
+        _registroTriageService = registroTriageService;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var resumenTriage = await _registroTriageService.ObtenerResumenRegistros();
+        return View(resumenTriage);
     }
 }

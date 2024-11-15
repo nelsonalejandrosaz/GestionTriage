@@ -14,4 +14,7 @@ public class Paciente
     
     // Relaciones
     public List<RegistroTriage> RegistrosTriage { get; set; }
+    
+    // Propiedades de solo lectura
+    public string NombreCompleto => $"{Nombres} {Apellidos}";
 }

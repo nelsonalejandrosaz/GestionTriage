@@ -1,4 +1,5 @@
 ﻿using GestionTriage.Models;
+using GestionTriage.ViewModels;
 
 namespace GestionTriage.Services;
 
@@ -13,4 +14,5 @@ public interface IRegistroTriageService
     Task<IEnumerable<RegistroTriage>> ObtenerRegistrosActivos(int hospitalId);
     Task<RegistroTriage> IniciarAtencion(int id);
     Task<RegistroTriage> FinalizarAtencion(int id, string observaciones);
+    Task<ResumenTriageViewModel> ObtenerResumenRegistros();
 }

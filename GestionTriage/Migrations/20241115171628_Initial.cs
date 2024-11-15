@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace GestionTriage.Migrations
 {
     /// <inheritdoc />
-    public partial class MigracionInicial : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -100,7 +100,7 @@ namespace GestionTriage.Migrations
                     FechaHoraAtencion = table.Column<DateTime>(type: "datetime2", nullable: true),
                     FechaHoraFinalizacion = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ObservacionesIngreso = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ObservacionesAtencion = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ObservacionesAtencion = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     EstadoAtendido = table.Column<bool>(type: "bit", nullable: false),
                     HospitalId = table.Column<int>(type: "int", nullable: false)
                 },
