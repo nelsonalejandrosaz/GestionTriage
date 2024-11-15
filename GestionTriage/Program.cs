@@ -12,11 +12,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddScoped<ITriageService, TriageService>();
 builder.Services.AddScoped<IPacienteService, PacienteService>();
 builder.Services.AddScoped<IReglaAsignacionService, ReglaAsignacionService>();
 builder.Services.AddScoped<INivelTriageService, NivelTriageService>();
 builder.Services.AddScoped<IHospitalService, HospitalService>();
+builder.Services.AddScoped<IRegistroTriageService, RegistroTriageService>();
 
 var app = builder.Build();
 
