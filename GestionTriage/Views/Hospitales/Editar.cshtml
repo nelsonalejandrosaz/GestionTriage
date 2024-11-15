@@ -1,0 +1,90 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model GestionTriage.ViewModels.HospitalViewModel
+@{
+    ViewData["Title"] = "Editar Hospital";
+}
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Editar Hospital</h3>
+                </div>
+                <div class="card-body">
+                    <form asp-action="Editar" method="post" id="formHospital">
+                        <input type="hidden" asp-for="Id" />
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                        <div class="mb-3">
+                            <label asp-for="Nombre" class="form-label">Nombre</label>
+                            <input asp-for="Nombre" class="form-control" />
+                            <span asp-validation-for="Nombre" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Direccion" class="form-label">Dirección</label>
+                            <input asp-for="Direccion" class="form-control" />
+                            <span asp-validation-for="Direccion" class="text-danger"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label asp-for="Telefono" class="form-label">Teléfono</label>
+                            <input asp-for="Telefono" class="form-control" />
+                            <span asp-validation-for="Telefono" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-check mb-3">
+                            <input asp-for="Activo" class="form-check-input" />
+                            <label asp-for="Activo" class="form-check-label">Activo</label>
+                        </div>
+
+                        @if (Model.CantidadRegistrosTriage > 0)
+                        {
+                            <div class="alert alert-info">
+                                Este hospital tiene @Model.CantidadRegistrosTriage registros triage.
+                            </div>
+                        }
+
+                        <div class="row mt-4">
+                            <div class="col">
+                                <a asp-action="Index" class="btn btn-secondary">
+                                    <i class="bi bi-arrow-left"></i> Volver a la lista
+                                </a>
+                            </div>
+                            <div class="col text-end">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-save"></i> Guardar Cambios
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function() {
+            $('#formHospital').validate({
+                rules: {
+                    Telefono: {
+                        required: true,
+                        minlength: 8,
+                        pattern: /^[0-9-+()]+$/
+                    },
+                },
+                messages: {
+                    Telefono: {
+                        required: "El teléfono es requerido",
+                        minlength: "El teléfono debe tener al menos 8 caracteres",
+                        pattern: "Por favor, ingrese un número de teléfono válido"
+                    },
+                }
+            });
+        });
+    </script>
+}

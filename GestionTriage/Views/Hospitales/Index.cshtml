@@ -1,0 +1,109 @@
+﻿@using Microsoft.AspNetCore.Mvc.TagHelpers
+@model GestionTriage.ViewModels.ListaHospitalesViewModel
+@{
+    ViewData["Title"] = "Hospitales";
+}
+
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Hospitales</h2>
+        <div>
+            <a asp-action="Crear" class="btn btn-success">
+                <i class="bi bi-plus-circle"></i> Nuevo Hospital
+            </a>
+        </div>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="card">
+        <div class="card-header">
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="mostrarInactivos" 
+                       asp-for="IncluirInactivos" onchange="actualizarFiltro()">
+                <label class="form-check-label" for="mostrarInactivos">
+                    Mostrar hospitales inactivos
+                </label>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Dirección</th>
+                            <th>Teléfono</th>
+                            <th>Estado</th>
+                            <th>Pacientes</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var hospital in Model.Hospitales)
+                        {
+                            <tr>
+                                <td>@hospital.Nombre</td>
+                                <td>@hospital.Direccion</td>
+                                <td>@hospital.Telefono</td>
+                                <td>
+                                    <span class="badge bg-@(hospital.Activo ? "success" : "danger")">
+                                        @(hospital.Activo ? "Activo" : "Inactivo")
+                                    </span>
+                                </td>
+                                <td>@hospital.CantidadRegistrosTriage registros triage</td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a asp-action="Editar" asp-route-id="@hospital.Id" 
+                                           class="btn btn-sm btn-primary">
+                                            <i class="bi bi-pencil"></i>
+                                        </a>
+                                        @if (hospital.CantidadRegistrosTriage == 0)
+                                        {
+                                            <button type="button" class="btn btn-sm btn-danger"
+                                                    onclick="confirmarEliminacion(@hospital.Id, '@hospital.Nombre')">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function actualizarFiltro() {
+            let incluirInactivos = document.getElementById('mostrarInactivos').checked;
+            window.location.href = `?incluirInactivos=${incluirInactivos}`;
+        }
+
+        function confirmarEliminacion(id, nombre) {
+            if (confirm(`¿Está seguro que desea eliminar el hospital ${nombre}?`)) {
+                var form = document.createElement('form');
+                form.method = 'post';
+                form.action = '@Url.Action("Eliminar")/' + id;
+
+                var antiForgeryToken = document.createElement('input');
+                antiForgeryToken.type = 'hidden';
+                antiForgeryToken.name = '__RequestVerificationToken';
+                antiForgeryToken.value = $('input[name="__RequestVerificationToken"]').val();
+
+                form.appendChild(antiForgeryToken);
+                document.body.appendChild(form);
+                form.submit();
+            }
+        }
+    </script>
+}

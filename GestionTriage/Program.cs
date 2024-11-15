@@ -16,6 +16,7 @@ builder.Services.AddScoped<ITriageService, TriageService>();
 builder.Services.AddScoped<IPacienteService, PacienteService>();
 builder.Services.AddScoped<IReglaAsignacionService, ReglaAsignacionService>();
 builder.Services.AddScoped<INivelTriageService, NivelTriageService>();
+builder.Services.AddScoped<IHospitalService, HospitalService>();
 
 var app = builder.Build();
 
